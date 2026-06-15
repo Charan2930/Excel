@@ -1,0 +1,88 @@
+Function NumberToWords(ByVal Num As Double) As String
+    Dim Rupees As Long
+    Dim Paise As Long
+    Dim Result As String
+    
+    Rupees = Fix(Num)
+    Paise = Round((Num - Rupees) * 100, 0)
+    
+    Result = ConvertIndianNumber(Rupees)
+    
+    If Paise > 0 Then
+        NumberToWords = Result & " and " & ConvertTwoDigits(Paise) & " Paise Only"
+    Else
+        NumberToWords = Result & " Only"
+    End If
+End Function
+
+Private Function ConvertIndianNumber(ByVal Num As Long) As String
+    Dim Result As String
+    Dim Crore As Long, Lakh As Long, Thousand As Long, Hundred As Long, Rest As Long
+    
+    If Num = 0 Then
+        ConvertIndianNumber = "Zero"
+        Exit Function
+    End If
+    
+    Crore = Num \ 10000000
+    Num = Num Mod 10000000
+    
+    Lakh = Num \ 100000
+    Num = Num Mod 100000
+    
+    Thousand = Num \ 1000
+    Num = Num Mod 1000
+    
+    Hundred = Num \ 100
+    Rest = Num Mod 100
+    
+    Result = ""
+    
+    If Crore > 0 Then
+        Result = Result & ConvertTwoDigits(Crore) & " Crore "
+    End If
+    
+    If Lakh > 0 Then
+        Result = Result & ConvertTwoDigits(Lakh) & " Lakh "
+    End If
+    
+    If Thousand > 0 Then
+        Result = Result & ConvertTwoDigits(Thousand) & " Thousand "
+    End If
+    
+    If Hundred > 0 Then
+        Result = Result & ConvertOneDigit(Hundred) & " Hundred "
+    End If
+    
+    If Rest > 0 Then
+        Result = Result & ConvertTwoDigits(Rest)
+    End If
+    
+    ConvertIndianNumber = Application.WorksheetFunction.Trim(Result)
+End Function
+
+Private Function ConvertTwoDigits(ByVal Num As Long) As String
+    Dim OnesArr As Variant
+    Dim TensArr As Variant
+    
+    OnesArr = Array("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", _
+                    "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", _
+                    "Sixteen", "Seventeen", "Eighteen", "Nineteen")
+                    
+    TensArr = Array("", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety")
+    
+    If Num < 20 Then
+        ConvertTwoDigits = OnesArr(Num)
+    Else
+        ConvertTwoDigits = TensArr(Num \ 10)
+        If (Num Mod 10) > 0 Then
+            ConvertTwoDigits = ConvertTwoDigits & " " & OnesArr(Num Mod 10)
+        End If
+    End If
+End Function
+
+Private Function ConvertOneDigit(ByVal Num As Long) As String
+    Dim OnesArr As Variant
+    OnesArr = Array("", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine")
+    ConvertOneDigit = OnesArr(Num)
+End Function
